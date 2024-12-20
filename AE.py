@@ -7,22 +7,29 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.metrics import roc_auc_score
+import os, argparse
 
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning, message=".*is_sparse is deprecated.*")
 
+main_dir = os.path.dirname(os.path.abspath(__file__))
+Dataset_dir = os.path.join(main_dir, 'Datasets/')
+Checkpoint_dir = os.path.join(main_dir, 'Checkpoint/')
+parser = argparse.ArgumentParser("AutoEncoder")
+parser.add_argument("--Dataset_name", type= str, help= "Name of dataset with which you wanna train the autoencoder") 
+args = parser.parse_args()
 # Load datasets
 Dataset_path = "/home/pegah/Codes/imd/"
 Dataset_names = ["Op1_CapDL_NoSteps.csv", "Op1_CapDL_NoSteps_wo_correlated_features.csv", "outliers_and_anomalies.csv"]
 
 # Load ground truth labels
-df2 = pd.read_csv(Dataset_path + Dataset_names[2], header=0, sep=',')
+df_ground_truth = pd.read_csv(Dataset_dir + "outliers_and_anomalies.csv", header=0, sep=',')
 
 # Load main dataset with features
-df = pd.read_csv(Dataset_path + Dataset_names[0], header=0, sep=',')
+df = pd.read_csv(Dataset_dir + args.Dataset_name, header=0, sep=',')
 
 # Combine datasets
-df_new = pd.concat([df, df2.iloc[:, 1:]], axis=1)
+df_new = pd.concat([df, df_ground_truth.iloc[:, 1:]], axis=1)
 
 # Display dataset information
 #print(df_new.shape)
